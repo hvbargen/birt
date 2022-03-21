@@ -22,7 +22,7 @@ import org.eclipse.birt.report.model.api.extension.IReportItem;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * RotatedTextImageUI
+ * QRCodeImageUI
  */
 public class QRCodeImageUI implements IReportItemImageProvider {
 

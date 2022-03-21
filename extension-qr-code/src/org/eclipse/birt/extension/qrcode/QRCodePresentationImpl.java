@@ -33,7 +33,7 @@ import org.eclipse.birt.report.model.api.ExtendedItemHandle;
 import org.eclipse.birt.report.model.api.extension.ExtendedElementException;
 
 /**
- * RotatedTextPresentationImpl
+ * QRCodePresentationImpl
  */
 public class QRCodePresentationImpl extends ReportItemPresentationBase {
 

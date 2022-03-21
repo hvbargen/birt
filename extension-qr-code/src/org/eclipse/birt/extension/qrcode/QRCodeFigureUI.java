@@ -21,7 +21,7 @@ import org.eclipse.birt.report.model.api.extension.IReportItem;
 import org.eclipse.draw2d.IFigure;
 
 /**
- * RotatedTextFigureUI
+ * QRCodeFigureUI
  */
 public class QRCodeFigureUI extends ReportItemFigureProvider {
 
@@ -46,8 +46,7 @@ public class QRCodeFigureUI extends ReportItemFigureProvider {
 
 			if (item instanceof QRCodeItem) {
 				QRCodeFigure fig = (QRCodeFigure) figure;
-
-				fig.setRotatedTextItem((QRCodeItem) item);
+				fig.setQRCodeItem((QRCodeItem) item);
 			}
 		} catch (ExtendedElementException e) {
 			e.printStackTrace();

@@ -19,11 +19,11 @@ import org.eclipse.birt.report.model.api.activity.SemanticException;
 import org.eclipse.birt.report.model.api.extension.ReportItem;
 
 /**
- * RotatedTextItem
+ * QRCodeItem
  */
 public class QRCodeItem extends ReportItem {
 
-	public static final String EXTENSION_NAME = "RotatedText"; //$NON-NLS-1$
+	public static final String EXTENSION_NAME = "QRCode"; //$NON-NLS-1$
 	public static final String TEXT_PROP = "text"; //$NON-NLS-1$
 	public static final String ROTATION_ANGLE_PROP = "rotationAngle"; //$NON-NLS-1$
 

@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
- * RotatedTextCustomPage
+ * QRCodeCustomPage
  */
 public class QRCodeCustomPage extends QRCodeGeneralPage {
 

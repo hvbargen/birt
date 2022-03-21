@@ -132,7 +132,7 @@ public class QRCodeFigure extends Figure {
 		}
 	}
 
-	void setRotatedTextItem(QRCodeItem item) {
+	void setQRCodeItem(QRCodeItem item) {
 		this.textItem = item;
 	}
 

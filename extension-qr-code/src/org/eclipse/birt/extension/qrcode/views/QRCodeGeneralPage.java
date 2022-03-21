@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 /**
- * RotatedTextGeneralPage
+ * QRCodeGeneralPage
  */
 public class QRCodeGeneralPage extends AttributesUtil.PageWrapper {
 

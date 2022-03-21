@@ -21,7 +21,7 @@ import org.eclipse.birt.report.model.api.extension.IReportItem;
 import org.eclipse.birt.report.model.api.extension.ReportItemFactory;
 
 /**
- * RotatedTextItemFactory
+ * QRCodeItemFactory
  */
 public class QRCodeItemFactory extends ReportItemFactory {
 

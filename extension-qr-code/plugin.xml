@@ -27,7 +27,7 @@
                name="rotationAngle"/>
          <property
                defaultDisplayName="Text Content"
-               defaultValue="&quot;Rotated Text&quot;"
+               defaultValue="&quot;QR-Code&quot;"
                name="text"
                type="expression"/>
       </reportItem>

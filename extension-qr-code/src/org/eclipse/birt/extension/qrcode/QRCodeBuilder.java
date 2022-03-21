@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * RotatedTextBuilder
+ * QRCodeBuilder
  */
 public class QRCodeBuilder extends ReportItemBuilderUI {
 
@@ -48,8 +48,8 @@ public class QRCodeBuilder extends ReportItemBuilderUI {
 			IReportItem item = handle.getReportItem();
 
 			if (item instanceof QRCodeItem) {
-				// XXX change to RotatedTextEditor2 for expression support
-				RotatedTextEditor editor = new RotatedTextEditor2(Display.getCurrent().getActiveShell(),
+				// XXX change to QRCodeEditor2 for expression support
+				QRCodeEditor editor = new QRCodeEditor2(Display.getCurrent().getActiveShell(),
 						(QRCodeItem) item);
 
 				return editor.open();
@@ -64,7 +64,7 @@ public class QRCodeBuilder extends ReportItemBuilderUI {
 /**
  * RotatedTextEditor
  */
-class RotatedTextEditor extends TrayDialog {
+class QRCodeEditor extends TrayDialog {
 
 	protected QRCodeItem textItem;
 
@@ -72,7 +72,7 @@ class RotatedTextEditor extends TrayDialog {
 	protected Scale sclAngle;
 	protected Label lbAngle;
 
-	protected RotatedTextEditor(Shell shell, QRCodeItem textItem) {
+	protected QRCodeEditor(Shell shell, QRCodeItem textItem) {
 		super(shell);
 
 		this.textItem = textItem;
@@ -161,11 +161,11 @@ class RotatedTextEditor extends TrayDialog {
 }
 
 /**
- * RotatedTextEditor2
+ * QRCodeEditor2
  */
-class RotatedTextEditor2 extends RotatedTextEditor {
+class QRCodeEditor2 extends QRCodeEditor {
 
-	protected RotatedTextEditor2(Shell shell, QRCodeItem textItem) {
+	protected QRCodeEditor2(Shell shell, QRCodeItem textItem) {
 		super(shell, textItem);
 	}
 

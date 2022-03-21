@@ -25,7 +25,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 
 /**
- * RotatedTextMenuBuilder
+ * QRCodeMenuBuilder
  */
 public class QRCodeMenuBuilder implements IMenuBuilder {
 
@@ -48,7 +48,7 @@ public class QRCodeMenuBuilder implements IMenuBuilder {
 				return;
 			}
 
-			Separator separator = new Separator("group.rotatedtext"); //$NON-NLS-1$
+			Separator separator = new Separator("group.qrcode"); //$NON-NLS-1$
 			if (menu.getItems().length > 0) {
 				menu.insertBefore(menu.getItems()[0].getId(), separator);
 			} else {

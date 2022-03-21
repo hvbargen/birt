@@ -25,7 +25,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.FillLayout;
 
 /**
- * RotatedTextPageGenerator
+ * QRCodePageGenerator
  */
 public class QRCodePageGenerator extends AbstractPageGenerator {
 

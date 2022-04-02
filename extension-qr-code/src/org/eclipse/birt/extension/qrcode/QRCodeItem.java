@@ -25,7 +25,8 @@ public class QRCodeItem extends ReportItem {
 
 	public static final String EXTENSION_NAME = "QRCode"; //$NON-NLS-1$
 	public static final String TEXT_PROP = "text"; //$NON-NLS-1$
-	public static final String ROTATION_ANGLE_PROP = "rotationAngle"; //$NON-NLS-1$
+	public static final String DOTS_WIDTH_PROP = "dotsWidth"; //$NON-NLS-1$
+	public static final String ENCODING_PROP = "encoding"; //$NON-NLS-1$
 
 	private ExtendedItemHandle modelHandle;
 
@@ -41,16 +42,24 @@ public class QRCodeItem extends ReportItem {
 		return modelHandle.getStringProperty(TEXT_PROP);
 	}
 
-	public int getRotationAngle() {
-		return modelHandle.getIntProperty(ROTATION_ANGLE_PROP);
+	public int getDotsWidth() {
+		return modelHandle.getIntProperty(DOTS_WIDTH_PROP);
+	}
+
+	public String getEncoding() {
+		return modelHandle.getStringProperty(ENCODING_PROP);
 	}
 
 	public void setText(String value) throws SemanticException {
 		modelHandle.setProperty(TEXT_PROP, value);
 	}
 
-	public void setRotationAngle(int value) throws SemanticException {
-		modelHandle.setProperty(ROTATION_ANGLE_PROP, value);
+	public void setDotsWidth(int value) throws SemanticException {
+		modelHandle.setProperty(DOTS_WIDTH_PROP, value);
+	}
+
+	public void setEncoding(String value) throws SemanticException {
+		modelHandle.setProperty(ENCODING_PROP, value);
 	}
 
 }

@@ -21,15 +21,21 @@
             class="org.eclipse.birt.extension.qrcode.QRCodeItemFactory"
             extensionName="QRCode">
          <property
-               defaultValue="0"
-               type="integer"
-               defaultDisplayName="Rotation Angle"
-               name="rotationAngle"/>
+               allowExpression="true"
+               defaultDisplayName="Width in dots"
+               defaultValue="105"
+               name="dotsWidth"
+               type="integer"/>
          <property
                defaultDisplayName="Text Content"
                defaultValue="&quot;QR-Code&quot;"
                name="text"
                type="expression"/>
+         <property
+               defaultDisplayName="encoding"
+               defaultValue="utf-8"
+               name="encoding"
+               type="string"/>
       </reportItem>
    </extension>
 

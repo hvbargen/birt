@@ -25,7 +25,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -33,8 +32,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -62,32 +61,35 @@ public class QRCodeBuilder extends ReportItemBuilderUI {
 }
 
 /**
- * RotatedTextEditor
+ * QRCodeEditor
  */
 class QRCodeEditor extends TrayDialog {
 
-	protected QRCodeItem textItem;
+	protected QRCodeItem qrItem;
 
 	protected Text txtText;
-	protected Scale sclAngle;
-	protected Label lbAngle;
+	protected Spinner spDotsWidth;
+	protected Text txtEncoding;
+	protected Label lbText;
+	protected Label lbDotsWidth;
+	protected Label lbEncoding;
 
-	protected QRCodeEditor(Shell shell, QRCodeItem textItem) {
+	protected QRCodeEditor(Shell shell, QRCodeItem qrItem) {
 		super(shell);
 
-		this.textItem = textItem;
+		this.qrItem = qrItem;
 	}
 
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 
-		newShell.setText("Rotated Text Builder"); //$NON-NLS-1$
+		newShell.setText("QRCode Builder"); //$NON-NLS-1$
 	}
 
 	protected void createTextArea(Composite parent) {
-		Label lb = new Label(parent, SWT.None);
-		lb.setText("Text Content:"); //$NON-NLS-1$
+		lbText = new Label(parent, SWT.None);
+		lbText.setText("Text Content:"); //$NON-NLS-1$
 
 		txtText = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -108,30 +110,22 @@ class QRCodeEditor extends TrayDialog {
 
 		createTextArea(composite);
 
-		Label lb = new Label(composite, SWT.None);
-		lb.setText("Rotation Angle:"); //$NON-NLS-1$
+		lbDotsWidth = new Label(composite, SWT.None);
+		lbDotsWidth.setText("Width (dots):"); //$NON-NLS-1$
 
-		sclAngle = new Scale(composite, SWT.None);
-		sclAngle.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		sclAngle.setMinimum(0);
-		sclAngle.setMaximum(360);
-		sclAngle.setIncrement(10);
-
-		lbAngle = new Label(composite, SWT.None);
+		spDotsWidth = new Spinner(composite, SWT.None);
+		spDotsWidth.setMinimum(21);
+		spDotsWidth.setMaximum(2000);
+		spDotsWidth.setDigits(0);
 		GridData gd = new GridData();
 		gd.widthHint = 20;
-		lbAngle.setLayoutData(gd);
+		spDotsWidth.setLayoutData(gd);
 
-		sclAngle.addSelectionListener(new SelectionListener() {
+		lbEncoding = new Label(composite, SWT.None);
+		lbEncoding.setText("Encoding:"); //$NON-NLS-1$
 
-			public void widgetDefaultSelected(SelectionEvent e) {
-				lbAngle.setText(String.valueOf(sclAngle.getSelection()));
-			}
-
-			public void widgetSelected(SelectionEvent e) {
-				lbAngle.setText(String.valueOf(sclAngle.getSelection()));
-			}
-		});
+		txtEncoding = new Text(composite, SWT.None);
+		txtEncoding.setLayoutData(gd);
 
 		applyDialogFont(composite);
 
@@ -141,17 +135,18 @@ class QRCodeEditor extends TrayDialog {
 	}
 
 	private void initValues() {
-		txtText.setText(textItem.getText());
-		sclAngle.setSelection(textItem.getRotationAngle());
-		lbAngle.setText(String.valueOf(textItem.getRotationAngle()));
+		txtText.setText(qrItem.getText());
+		spDotsWidth.setSelection(qrItem.getDotsWidth());
+		txtEncoding.setText(qrItem.getEncoding());
 	}
 
 	@Override
 	protected void okPressed() {
 
 		try {
-			textItem.setText(txtText.getText());
-			textItem.setRotationAngle(sclAngle.getSelection());
+			qrItem.setText(txtText.getText());
+			qrItem.setDotsWidth(Integer.parseInt(spDotsWidth.getText()));
+			qrItem.setEncoding(txtEncoding.getText());
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -171,8 +166,8 @@ class QRCodeEditor2 extends QRCodeEditor {
 
 	@Override
 	protected void createTextArea(Composite parent) {
-		Label lb = new Label(parent, SWT.None);
-		lb.setText("Text Content:"); //$NON-NLS-1$
+		lbText = new Label(parent, SWT.None);
+		lbText.setText("Text Content:"); //$NON-NLS-1$
 
 		txtText = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -196,7 +191,7 @@ class QRCodeEditor2 extends QRCodeEditor {
 		String oldValue = textControl.getText();
 
 		ExpressionBuilder eb = new ExpressionBuilder(textControl.getShell(), oldValue);
-		eb.setExpressionProvier(new ExpressionProvider(textItem.getModelHandle()));
+		eb.setExpressionProvider(new ExpressionProvider(qrItem.getModelHandle()));
 
 		String result = oldValue;
 

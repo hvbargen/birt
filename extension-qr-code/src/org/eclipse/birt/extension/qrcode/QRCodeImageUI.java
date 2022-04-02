@@ -38,10 +38,11 @@ public class QRCodeImageUI implements IReportItemImageProvider {
 			IReportItem item = handle.getReportItem();
 
 			if (item instanceof QRCodeItem) {
-				int angle = ((QRCodeItem) item).getRotationAngle();
+				int dotsWidth = ((QRCodeItem) item).getDotsWidth();
 				String text = ((QRCodeItem) item).getText();
+				String encoding = ((QRCodeItem) item).getEncoding();
 
-				return SwtGraphicsUtil.createQRCodeImage(text, angle, null);
+				return SwtGraphicsUtil.createQRCodeImage(text, dotsWidth, dotsWidth, encoding);
 			}
 		} catch (ExtendedElementException e) {
 			e.printStackTrace();

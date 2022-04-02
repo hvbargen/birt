@@ -29,7 +29,7 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
  */
 public class QRCodeCustomPage extends QRCodeGeneralPage {
 
-	private Label lbText, lbAngle;
+	private Label lbText, lbDotsWidth, lbEncoding;
 
 	@Override
 	public void buildUI(Composite parent) {
@@ -55,11 +55,17 @@ public class QRCodeCustomPage extends QRCodeGeneralPage {
 			gd.widthHint = 200;
 			lbText.setLayoutData(gd);
 
-			toolkit.createLabel(contentpane, "Rotation Angle:"); //$NON-NLS-1$
-			lbAngle = toolkit.createLabel(contentpane, ""); //$NON-NLS-1$
+			toolkit.createLabel(contentpane, "Width (dots):"); //$NON-NLS-1$
+			lbDotsWidth = toolkit.createLabel(contentpane, ""); //$NON-NLS-1$
 			gd = new GridData();
 			gd.widthHint = 200;
-			lbAngle.setLayoutData(gd);
+			lbDotsWidth.setLayoutData(gd);
+
+			toolkit.createLabel(contentpane, "Encoding:"); //$NON-NLS-1$
+			lbEncoding = toolkit.createLabel(contentpane, ""); //$NON-NLS-1$
+			gd = new GridData();
+			gd.widthHint = 200;
+			lbEncoding.setLayoutData(gd);
 
 		}
 	}
@@ -71,8 +77,9 @@ public class QRCodeCustomPage extends QRCodeGeneralPage {
 		if (item != null) {
 			String text = item.getText();
 			lbText.setText(text == null ? "" : text); //$NON-NLS-1$
-
-			lbAngle.setText(String.valueOf(item.getRotationAngle()));
+			lbDotsWidth.setText(String.valueOf(item.getDotsWidth()));
+			String encoding = item.getEncoding();
+			lbEncoding.setText(encoding == null ? "" : encoding);
 		}
 	}
 

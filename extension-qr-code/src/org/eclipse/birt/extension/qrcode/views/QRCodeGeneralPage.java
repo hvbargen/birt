@@ -44,7 +44,7 @@ public class QRCodeGeneralPage extends AttributesUtil.PageWrapper {
 	protected Object input;
 	protected Composite contentpane;
 
-	private Text txtText, txtAngle;
+	private Text txtText, txtDotsWidth, txtEncoding;
 
 	@Override
 	public void buildUI(Composite parent) {
@@ -80,8 +80,6 @@ public class QRCodeGeneralPage extends AttributesUtil.PageWrapper {
 				}
 			});
 
-			// XXX uncomment this block for expression support
-			// /*
 			Button btnExp = toolkit.createButton(contentpane, "...", SWT.PUSH); //$NON-NLS-1$
 			btnExp.setToolTipText("Invoke Expression Builder"); //$NON-NLS-1$
 			btnExp.addSelectionListener(new SelectionAdapter() {
@@ -91,19 +89,32 @@ public class QRCodeGeneralPage extends AttributesUtil.PageWrapper {
 					openExpression(txtText);
 				}
 			});
-			// */
 
-			toolkit.createLabel(contentpane, "Rotation Angle:"); //$NON-NLS-1$
-			txtAngle = toolkit.createText(contentpane, ""); //$NON-NLS-1$
+			toolkit.createLabel(contentpane, "Width (dots):"); //$NON-NLS-1$
+			txtDotsWidth = toolkit.createText(contentpane, ""); //$NON-NLS-1$
 			gd = new GridData();
 			gd.widthHint = 200;
 			gd.horizontalSpan = 2;
-			txtAngle.setLayoutData(gd);
-			txtAngle.addFocusListener(new FocusAdapter() {
+			txtDotsWidth.setLayoutData(gd);
+			txtDotsWidth.addFocusListener(new FocusAdapter() {
 
 				@Override
 				public void focusLost(org.eclipse.swt.events.FocusEvent e) {
-					updateModel(QRCodeItem.ROTATION_ANGLE_PROP);
+					updateModel(QRCodeItem.DOTS_WIDTH_PROP);
+				}
+			});
+
+			toolkit.createLabel(contentpane, "Encoding:"); //$NON-NLS-1$
+			txtEncoding = toolkit.createText(contentpane, ""); //$NON-NLS-1$
+			gd = new GridData();
+			gd.widthHint = 200;
+			gd.horizontalSpan = 2;
+			txtEncoding.setLayoutData(gd);
+			txtEncoding.addFocusListener(new FocusAdapter() {
+
+				@Override
+				public void focusLost(org.eclipse.swt.events.FocusEvent e) {
+					updateModel(QRCodeItem.ENCODING_PROP);
 				}
 			});
 
@@ -117,7 +128,7 @@ public class QRCodeGeneralPage extends AttributesUtil.PageWrapper {
 			String oldValue = textControl.getText();
 
 			ExpressionBuilder eb = new ExpressionBuilder(textControl.getShell(), oldValue);
-			eb.setExpressionProvier(new ExpressionProvider(item.getModelHandle()));
+			eb.setExpressionProvider(new ExpressionProvider(item.getModelHandle()));
 
 			String result = oldValue;
 
@@ -201,10 +212,12 @@ public class QRCodeGeneralPage extends AttributesUtil.PageWrapper {
 
 		if (item != null) {
 			try {
-				if (QRCodeItem.ROTATION_ANGLE_PROP.equals(prop)) {
-					item.setRotationAngle(Integer.parseInt(txtAngle.getText()));
+				if (QRCodeItem.DOTS_WIDTH_PROP.equals(prop)) {
+					item.setDotsWidth(Integer.parseInt(txtDotsWidth.getText()));
 				} else if (QRCodeItem.TEXT_PROP.equals(prop)) {
 					item.setText(txtText.getText());
+				} else if (QRCodeItem.ENCODING_PROP.equals(prop)) {
+					item.setEncoding(txtEncoding.getText());
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -218,8 +231,9 @@ public class QRCodeGeneralPage extends AttributesUtil.PageWrapper {
 		if (item != null) {
 			String text = item.getText();
 			txtText.setText(text == null ? "" : text); //$NON-NLS-1$
-
-			txtAngle.setText(String.valueOf(item.getRotationAngle()));
+			txtDotsWidth.setText(String.valueOf(item.getDotsWidth()));
+			String encoding = item.getEncoding();
+			txtEncoding.setText(encoding == null ? "" : encoding); //$NON-NLS-1$
 		}
 	}
 }

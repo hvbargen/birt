@@ -18,9 +18,7 @@ import java.util.List;
 
 import org.eclipse.birt.report.designer.ui.extensions.IMenuBuilder;
 import org.eclipse.birt.report.model.api.ExtendedItemHandle;
-import org.eclipse.birt.report.model.api.activity.SemanticException;
 import org.eclipse.birt.report.model.api.extension.ExtendedElementException;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 
@@ -55,35 +53,35 @@ public class QRCodeMenuBuilder implements IMenuBuilder {
 				menu.add(separator);
 			}
 
-			menu.appendToGroup(separator.getId(), new RotateAction(item, -90));
-			menu.appendToGroup(separator.getId(), new RotateAction(item, 90));
-			menu.appendToGroup(separator.getId(), new RotateAction(item, 0));
-			menu.appendToGroup(separator.getId(), new RotateAction(item, 180));
+//			menu.appendToGroup(separator.getId(), new RotateAction(item, -90));
+//			menu.appendToGroup(separator.getId(), new RotateAction(item, 90));
+//			menu.appendToGroup(separator.getId(), new RotateAction(item, 0));
+//			menu.appendToGroup(separator.getId(), new RotateAction(item, 180));
 		}
 	}
 
-	/**
-	 * RotateAtction
-	 */
-	static class RotateAction extends Action {
-
-		private QRCodeItem item;
-		private int angle;
-
-		RotateAction(QRCodeItem item, int angle) {
-			this.item = item;
-			this.angle = angle;
-
-			setText("Rotate as " + angle + "\u00BA"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-
-		@Override
-		public void run() {
-			try {
-				item.setRotationAngle(angle);
-			} catch (SemanticException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+//	/**
+//	 * RotateAtction
+//	 */
+//	static class RotateAction extends Action {
+//
+//		private QRCodeItem item;
+//		private int angle;
+//
+//		RotateAction(QRCodeItem item, int angle) {
+//			this.item = item;
+//			this.angle = angle;
+//
+//			setText("Rotate as " + angle + "\u00BA"); //$NON-NLS-1$ //$NON-NLS-2$
+//		}
+//
+//		@Override
+//		public void run() {
+//			try {
+//				item.setRotationAngle(angle);
+//			} catch (SemanticException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//	}
 }

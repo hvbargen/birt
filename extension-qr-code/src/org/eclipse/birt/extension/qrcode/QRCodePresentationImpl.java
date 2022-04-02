@@ -15,7 +15,6 @@
 
 package org.eclipse.birt.extension.qrcode;
 
-import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,12 +36,12 @@ import org.eclipse.birt.report.model.api.extension.ExtendedElementException;
  */
 public class QRCodePresentationImpl extends ReportItemPresentationBase {
 
-	private QRCodeItem textItem;
+	private QRCodeItem qrItem;
 
 	@Override
 	public void setModelObject(ExtendedItemHandle modelHandle) {
 		try {
-			textItem = (QRCodeItem) modelHandle.getReportItem();
+			qrItem = (QRCodeItem) modelHandle.getReportItem();
 		} catch (ExtendedElementException e) {
 			e.printStackTrace();
 		}
@@ -55,15 +54,14 @@ public class QRCodePresentationImpl extends ReportItemPresentationBase {
 
 	@Override
 	public Object onRowSets(IBaseResultSet[] results) throws BirtException {
-		if (textItem == null) {
+		if (qrItem == null) {
 			return null;
 		}
 
-		int angle = textItem.getRotationAngle();
-		String text = textItem.getText();
+		int dotsWidth = qrItem.getDotsWidth();
+		String text = qrItem.getText();
+		String encoding = qrItem.getEncoding();
 
-		// XXX Uncomment this block for expression support
-		// /*
 		if (results != null && results.length > 0) {
 			if (results[0] instanceof IQueryResultSet && ((IQueryResultSet) results[0]).isBeforeFirst()) {
 				((IQueryResultSet) results[0]).next();
@@ -73,9 +71,8 @@ public class QRCodePresentationImpl extends ReportItemPresentationBase {
 		} else {
 			text = String.valueOf(context.evaluate(text));
 		}
-		// */
 
-		BufferedImage rotatedImage = SwingGraphicsUtil.createQRCodeImage(text, angle, new Font("Default", 0, 12)); //$NON-NLS-1$
+		BufferedImage qrImage = SwingGraphicsUtil.createQRCodeImage(text, dotsWidth, dotsWidth, encoding); // $NON-NLS-1$
 
 		ByteArrayInputStream bis = null;
 
@@ -86,7 +83,7 @@ public class QRCodePresentationImpl extends ReportItemPresentationBase {
 
 			ImageOutputStream ios = ImageIO.createImageOutputStream(baos);
 
-			ImageIO.write(rotatedImage, "png", ios); //$NON-NLS-1$
+			ImageIO.write(qrImage, "png", ios); //$NON-NLS-1$
 			ios.flush();
 			ios.close();
 

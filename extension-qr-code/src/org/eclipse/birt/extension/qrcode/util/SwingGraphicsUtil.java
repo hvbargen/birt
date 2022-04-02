@@ -24,8 +24,15 @@ import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 /**
  * SwingGraphicsUtil
@@ -53,7 +60,7 @@ public class SwingGraphicsUtil {
 			g2d.dispose();
 			g2d = null;
 
-			return createQRImage(tl, (int) bounds.getWidth(), (int) bounds.getHeight(), angle);
+			return createQRImage(tl, text, (int) bounds.getWidth(), (int) bounds.getHeight(), angle);
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -65,7 +72,7 @@ public class SwingGraphicsUtil {
 		return null;
 	}
 
-	private static BufferedImage createQRImage(Object src, int width, int height, int angle) {
+	private static BufferedImage createQRImage(Object src, String text, int width, int height, int angle) {
 		angle = angle % 360;
 
 		if (angle < 0) {
@@ -73,13 +80,13 @@ public class SwingGraphicsUtil {
 		}
 
 		if (angle == 0) {
-			return renderQRObject(src, 0, width, height, 0, 0);
+			return renderQRObject(src, text, 0, width, height, 0, 0);
 		} else if (angle == 90) {
-			return renderQRObject(src, -Math.PI / 2, height, width, -width, 0);
+			return renderQRObject(src, text, -Math.PI / 2, height, width, -width, 0);
 		} else if (angle == 180) {
-			return renderQRObject(src, Math.PI, width, height, -width, -height);
+			return renderQRObject(src, text, Math.PI, width, height, -width, -height);
 		} else if (angle == 270) {
-			return renderQRObject(src, Math.PI / 2, height, width, 0, -height);
+			return renderQRObject(src, text, Math.PI / 2, height, width, 0, -height);
 		} else if (angle > 0 && angle < 90) {
 			double angleInRadians = ((-angle * Math.PI) / 180.0);
 			double cosTheta = Math.abs(Math.cos(angleInRadians));
@@ -88,7 +95,7 @@ public class SwingGraphicsUtil {
 			int dW = (int) (width * cosTheta + height * sineTheta);
 			int dH = (int) (width * sineTheta + height * cosTheta);
 
-			return renderQRObject(src, angleInRadians, dW, dH, -width * sineTheta * sineTheta,
+			return renderQRObject(src, text, angleInRadians, dW, dH, -width * sineTheta * sineTheta,
 					width * sineTheta * cosTheta);
 
 		} else if (angle > 90 && angle < 180) {
@@ -99,7 +106,7 @@ public class SwingGraphicsUtil {
 			int dW = (int) (width * cosTheta + height * sineTheta);
 			int dH = (int) (width * sineTheta + height * cosTheta);
 
-			return renderQRObject(src, angleInRadians, dW, dH, -(width + height * sineTheta * cosTheta),
+			return renderQRObject(src, text, angleInRadians, dW, dH, -(width + height * sineTheta * cosTheta),
 					-height / 2);
 
 		} else if (angle > 180 && angle < 270) {
@@ -110,7 +117,7 @@ public class SwingGraphicsUtil {
 			int dW = (int) (width * cosTheta + height * sineTheta);
 			int dH = (int) (width * sineTheta + height * cosTheta);
 
-			return renderQRObject(src, angleInRadians, dW, dH, -(width * cosTheta * cosTheta),
+			return renderQRObject(src, text, angleInRadians, dW, dH, -(width * cosTheta * cosTheta),
 					-(height + width * cosTheta * sineTheta));
 
 		} else if (angle > 270 && angle < 360) {
@@ -121,17 +128,18 @@ public class SwingGraphicsUtil {
 			int dW = (int) (width * cosTheta + height * sineTheta);
 			int dH = (int) (width * sineTheta + height * cosTheta);
 
-			return renderQRObject(src, angleInRadians, dW, dH, (height * cosTheta * sineTheta),
+			return renderQRObject(src, text, angleInRadians, dW, dH, (height * cosTheta * sineTheta),
 					-(height * sineTheta * sineTheta));
 
 		}
 
-		return renderQRObject(src, 0, width, height, 0, 0);
+		return renderQRObject(src, text, 0, width, height, 0, 0);
 	}
 
-	private static BufferedImage renderQRObject(Object src, double angle, int width, int height, double tx,
+	private static BufferedImage renderQRObject(Object src, String text, double angle, int width, int height, double tx,
 			double ty) {
 		BufferedImage dest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		QRCodeWriter qrw = null;
 
 		Graphics2D g2d = (Graphics2D) dest.getGraphics();
 		g2d.setColor(Color.black);
@@ -143,8 +151,21 @@ public class SwingGraphicsUtil {
 		g2d.setTransform(at);
 
 		if (src instanceof TextLayout) {
-			TextLayout tl = (TextLayout) src;
-			tl.draw(g2d, 0, tl.getAscent());
+			try {
+				TextLayout tl = (TextLayout) src;
+
+				qrw = new QRCodeWriter();
+				HashMap<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
+				hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+				hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+				hints.put(EncodeHintType.QR_VERSION, 2);
+				BitMatrix bm = qrw.encode(text, BarcodeFormat.QR_CODE, width, height, hints);
+				BufferedImage im = MatrixToImageWriter.toBufferedImage(bm);
+				g2d.drawImage(im, 0, 0, null);
+			} catch (WriterException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (src instanceof Image) {
 			g2d.drawImage((Image) src, 0, 0, null);
 		}

@@ -14,8 +14,6 @@
 
 package org.eclipse.birt.extension.qrcode.util;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
@@ -23,13 +21,12 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
-import org.eclipse.swt.graphics.TextLayout;
-import org.eclipse.swt.graphics.Transform;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitArray;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
@@ -44,11 +41,7 @@ public class SwtGraphicsUtil {
 				return null;
 			}
 
-			Display display = Display.getCurrent();
-
-			TextLayout tl = new TextLayout(display);
-
-			return createQRImage(tl, dotsWidth, dotsHeight, encoding);
+			return createQRImage(text, dotsWidth, dotsHeight, encoding);
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -57,18 +50,33 @@ public class SwtGraphicsUtil {
 		return null;
 	}
 
-	private static Image createQRImage(Object src, int width, int height, String encoding) {
+	private static Image createQRImage(String text, int width, int height, String encoding) {
 
-		return renderQRObject(src, width, height, encoding);
+		return renderQRObject(text, width, height, encoding);
 	}
 
-	private static Image renderQRObject(Object src, int width, int height, String encoding) {
+	private static byte[] toByteArray(BitMatrix matrix) {
+		int width = matrix.getWidth();
+		int height = matrix.getHeight();
+
+		int bytesPerRow = (width + 7) / 8;
+		byte[] out = new byte[height * bytesPerRow];
+		int offset = 0;
+		BitArray row = new BitArray(width);
+		for (int y = 0; y < height; y++) {
+			row = matrix.getRow(y, row);
+			row.toBytes(0, out, offset, bytesPerRow);
+			offset += bytesPerRow;
+		}
+		return out;
+	}
+
+	private static Image renderQRObject(String text, int width, int height, String encoding) {
 		Display display = Display.getCurrent();
 		QRCodeWriter qrw = null;
 
 		Image dest = null;
 		GC gc = null;
-		Transform tf = null;
 
 		try {
 			dest = new Image(display, width, height);
@@ -77,35 +85,21 @@ public class SwtGraphicsUtil {
 			gc.setAdvanced(true);
 			gc.setAntialias(SWT.OFF);
 
-			if (src instanceof TextLayout) {
-				TextLayout tl = (TextLayout) src;
+			qrw = new QRCodeWriter();
+			HashMap<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
+			hints.put(EncodeHintType.CHARACTER_SET, encoding != null ? encoding : "utf-8");
+			hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+			hints.put(EncodeHintType.QR_VERSION, 2);
+			BitMatrix bm = qrw.encode(text, BarcodeFormat.QR_CODE, width, height, hints);
 
-				qrw = new QRCodeWriter();
-				HashMap<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
-				hints.put(EncodeHintType.CHARACTER_SET, encoding != null ? encoding : "utf-8");
-				hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
-				hints.put(EncodeHintType.QR_VERSION, 2);
-				BitMatrix bm = qrw.encode(tl.getText(), BarcodeFormat.QR_CODE, width, height, hints);
-				BufferedImage im = MatrixToImageWriter.toBufferedImage(bm);
+			byte[] rawData = toByteArray(bm);
+			org.eclipse.swt.graphics.PaletteData swtPalette = new PaletteData(new RGB(0xff, 0xff, 0xff),
+					new RGB(0, 0, 0));
+			int depth = 1;
+			org.eclipse.swt.graphics.ImageData swtImageData = new ImageData(width, height, depth, swtPalette, 1,
+					rawData);
+			dest = new Image(Display.getDefault(), swtImageData);
 
-				java.awt.image.WritableRaster awtRaster = im.getRaster();
-				java.awt.image.DataBufferByte awtData = (DataBufferByte) awtRaster.getDataBuffer();
-				byte[] rawData = awtData.getData();
-
-				org.eclipse.swt.graphics.PaletteData swtPalette = new PaletteData(0xff, 0xff00, 0xff0000);
-
-				int depth = 24;
-				org.eclipse.swt.graphics.ImageData swtImageData = new ImageData(width, height, depth, swtPalette, width,
-						rawData);
-
-				org.eclipse.swt.graphics.Image swtImage = new Image(Display.getDefault(), swtImageData);
-
-				gc.drawImage(swtImage, 0, 0);
-
-				tl.draw(gc, 0, 0);
-			} else if (src instanceof Image) {
-				gc.drawImage((Image) src, 0, 0);
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -113,9 +107,6 @@ public class SwtGraphicsUtil {
 				gc.dispose();
 			}
 
-			if (tf != null && !tf.isDisposed()) {
-				tf.dispose();
-			}
 		}
 
 		return dest;

@@ -41,18 +41,13 @@ public class SwtGraphicsUtil {
 				return null;
 			}
 
-			return createQRImage(text, dotsWidth, dotsHeight, encoding);
+			return renderQRObject(text, dotsWidth, dotsHeight, encoding);
 		} catch (Exception e) {
 			e.printStackTrace();
 
 		}
 
 		return null;
-	}
-
-	private static Image createQRImage(String text, int width, int height, String encoding) {
-
-		return renderQRObject(text, width, height, encoding);
 	}
 
 	private static byte[] toByteArray(BitMatrix matrix) {
@@ -98,6 +93,7 @@ public class SwtGraphicsUtil {
 			int depth = 1;
 			org.eclipse.swt.graphics.ImageData swtImageData = new ImageData(width, height, depth, swtPalette, 1,
 					rawData);
+			swtImageData.transparentPixel = 0;
 			dest = new Image(Display.getDefault(), swtImageData);
 
 		} catch (Exception e) {

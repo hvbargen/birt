@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
-import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
@@ -39,11 +39,13 @@ public class SwingGraphicsUtil {
 
 			qrw = new QRCodeWriter();
 			HashMap<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
-			hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
+			hints.put(EncodeHintType.CHARACTER_SET, (encoding != null ? encoding : "utf-8"));
 			hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
 			hints.put(EncodeHintType.QR_VERSION, 2);
 			BitMatrix bm = qrw.encode(text, BarcodeFormat.QR_CODE, dotsWidth, dotsHeight, hints);
-			BufferedImage im = MatrixToImageWriter.toBufferedImage(bm);
+			MatrixToImageConfig config = new MatrixToImageConfig(0xFF000000, 0x00FFFFFF);
+			// BLACK and transparent instead of white
+			BufferedImage im = MatrixToImageWriter.toBufferedImage(bm, config);
 			return im;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -51,26 +53,4 @@ public class SwingGraphicsUtil {
 		return null;
 	}
 
-	private static BufferedImage createQRImage(String text, int width, int height, String encoding) {
-		return renderQRObject(text, width, height, encoding);
-	}
-
-	private static BufferedImage renderQRObject(String text, int width, int height, String encoding) {
-		QRCodeWriter qrw = null;
-
-			try {
-				qrw = new QRCodeWriter();
-				HashMap<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
-				hints.put(EncodeHintType.CHARACTER_SET, (encoding != null ? encoding : "utf-8"));
-				hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
-				hints.put(EncodeHintType.QR_VERSION, 2);
-				BitMatrix bm = qrw.encode(text, BarcodeFormat.QR_CODE, width, height, hints);
-				BufferedImage im = MatrixToImageWriter.toBufferedImage(bm);
-				return im;
-			} catch (WriterException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return null;
-			}
-	}
 }

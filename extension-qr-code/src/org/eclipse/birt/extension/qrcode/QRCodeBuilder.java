@@ -47,7 +47,6 @@ public class QRCodeBuilder extends ReportItemBuilderUI {
 			IReportItem item = handle.getReportItem();
 
 			if (item instanceof QRCodeItem) {
-				// XXX change to QRCodeEditor2 for expression support
 				QRCodeEditor editor = new QRCodeEditor(Display.getCurrent().getActiveShell(),
 						(QRCodeItem) item);
 
@@ -87,28 +86,6 @@ class QRCodeEditor extends TrayDialog {
 		newShell.setText("QRCode Builder"); //$NON-NLS-1$
 	}
 
-	private void createTextArea(Composite parent) {
-		lbText = new Label(parent, SWT.None);
-		lbText.setText("Text Content:"); //$NON-NLS-1$
-
-		txtText = new Text(parent, SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		txtText.setLayoutData(gd);
-
-		Button btnExp = new Button(parent, SWT.PUSH);
-		btnExp.setText("..."); //$NON-NLS-1$
-		btnExp.setToolTipText("Invoke Expression Builder"); //$NON-NLS-1$
-
-		btnExp.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				openExpression(txtText);
-			}
-		});
-
-	}
-
 	private void openExpression(Text textControl) {
 		String oldValue = textControl.getText();
 
@@ -137,21 +114,38 @@ class QRCodeEditor extends TrayDialog {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		createTextArea(composite);
+		lbText = new Label(composite, SWT.None);
+		lbText.setText("Text Content:"); //$NON-NLS-1$
+
+		txtText = new Text(composite, SWT.BORDER);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		txtText.setLayoutData(gd);
+
+		Button btnExp = new Button(composite, SWT.PUSH);
+		btnExp.setText("..."); //$NON-NLS-1$
+		btnExp.setToolTipText("Invoke Expression Builder");
+
+		btnExp.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				openExpression(txtText);
+			}
+		});
 
 		lbDotsWidth = new Label(composite, SWT.None);
-		lbDotsWidth.setText("Width (dots):"); //$NON-NLS-1$
+		lbDotsWidth.setText("Width (dots):");
 
 		spDotsWidth = new Spinner(composite, SWT.None);
 		spDotsWidth.setMinimum(21);
 		spDotsWidth.setMaximum(2000);
 		spDotsWidth.setDigits(0);
-		GridData gd = new GridData();
-		gd.widthHint = 20;
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
 		spDotsWidth.setLayoutData(gd);
 
 		lbEncoding = new Label(composite, SWT.None);
-		lbEncoding.setText("Encoding:"); //$NON-NLS-1$
+		lbEncoding.setText("Encoding:");
 
 		txtEncoding = new Text(composite, SWT.None);
 		txtEncoding.setLayoutData(gd);

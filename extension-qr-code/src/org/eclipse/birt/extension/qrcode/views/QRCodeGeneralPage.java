@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
@@ -44,7 +45,9 @@ public class QRCodeGeneralPage extends AttributesUtil.PageWrapper {
 	protected Object input;
 	protected Composite contentpane;
 
-	private Text txtText, txtDotsWidth, txtEncoding;
+	private Text txtText;
+	private Spinner spDotsWidth;
+	private Text txtEncoding;
 
 	@Override
 	public void buildUI(Composite parent) {
@@ -68,9 +71,6 @@ public class QRCodeGeneralPage extends AttributesUtil.PageWrapper {
 			GridData gd = new GridData();
 			gd.widthHint = 200;
 
-			// XXX comment for expression support
-			// gd.horizontalSpan = 2;
-
 			txtText.setLayoutData(gd);
 			txtText.addFocusListener(new FocusAdapter() {
 
@@ -90,13 +90,17 @@ public class QRCodeGeneralPage extends AttributesUtil.PageWrapper {
 				}
 			});
 
-			toolkit.createLabel(contentpane, "Width (dots):"); //$NON-NLS-1$
-			txtDotsWidth = toolkit.createText(contentpane, ""); //$NON-NLS-1$
+			toolkit.createLabel(contentpane, "Width (dots):");
+			spDotsWidth = new Spinner(contentpane, SWT.None);
+			spDotsWidth.setMinimum(21);
+			spDotsWidth.setMaximum(2000);
+			spDotsWidth.setDigits(0);
+
 			gd = new GridData();
 			gd.widthHint = 200;
 			gd.horizontalSpan = 2;
-			txtDotsWidth.setLayoutData(gd);
-			txtDotsWidth.addFocusListener(new FocusAdapter() {
+			spDotsWidth.setLayoutData(gd);
+			spDotsWidth.addFocusListener(new FocusAdapter() {
 
 				@Override
 				public void focusLost(org.eclipse.swt.events.FocusEvent e) {
@@ -213,7 +217,7 @@ public class QRCodeGeneralPage extends AttributesUtil.PageWrapper {
 		if (item != null) {
 			try {
 				if (QRCodeItem.DOTS_WIDTH_PROP.equals(prop)) {
-					item.setDotsWidth(Integer.parseInt(txtDotsWidth.getText()));
+					item.setDotsWidth(Integer.parseInt(spDotsWidth.getText()));
 				} else if (QRCodeItem.TEXT_PROP.equals(prop)) {
 					item.setText(txtText.getText());
 				} else if (QRCodeItem.ENCODING_PROP.equals(prop)) {
@@ -231,7 +235,7 @@ public class QRCodeGeneralPage extends AttributesUtil.PageWrapper {
 		if (item != null) {
 			String text = item.getText();
 			txtText.setText(text == null ? "" : text); //$NON-NLS-1$
-			txtDotsWidth.setText(String.valueOf(item.getDotsWidth()));
+			spDotsWidth.setSelection(item.getDotsWidth());
 			String encoding = item.getEncoding();
 			txtEncoding.setText(encoding == null ? "" : encoding); //$NON-NLS-1$
 		}

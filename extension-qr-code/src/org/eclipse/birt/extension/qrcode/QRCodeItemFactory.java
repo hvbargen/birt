@@ -26,10 +26,10 @@ import org.eclipse.birt.report.model.api.extension.ReportItemFactory;
 public class QRCodeItemFactory extends ReportItemFactory {
 
 	@Override
-	public IReportItem newReportItem(DesignElementHandle modelHanlde) {
-		if (modelHanlde instanceof ExtendedItemHandle
-				&& QRCodeItem.EXTENSION_NAME.equals(((ExtendedItemHandle) modelHanlde).getExtensionName())) {
-			return new QRCodeItem((ExtendedItemHandle) modelHanlde);
+	public IReportItem newReportItem(DesignElementHandle modelHandle) {
+		if (modelHandle instanceof ExtendedItemHandle
+				&& QRCodeItem.EXTENSION_NAME.equals(((ExtendedItemHandle) modelHandle).getExtensionName())) {
+			return new QRCodeItem((ExtendedItemHandle) modelHandle);
 		}
 		return null;
 	}

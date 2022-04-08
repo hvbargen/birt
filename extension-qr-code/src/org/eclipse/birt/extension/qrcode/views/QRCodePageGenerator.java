@@ -29,25 +29,10 @@ import org.eclipse.swt.layout.FillLayout;
  */
 public class QRCodePageGenerator extends AbstractPageGenerator {
 
-	private static final String CUSTOM_PAGE_TITLE = "Custom"; //$NON-NLS-1$
-
 	private IPropertyTabUI generalPage;
 
 	protected void buildItemContent(CTabItem item) {
-		if (itemMap.containsKey(item) && itemMap.get(item) == null) {
-			String title = tabFolder.getSelection().getText();
-
-			if (CUSTOM_PAGE_TITLE.equals(title)) {
-				TabPage page = new QRCodeCustomPage().getPage();
-
-				if (page != null) {
-					setPageInput(page);
-					refresh(tabFolder, page, true);
-					item.setControl(page.getControl());
-					itemMap.put(item, page);
-				}
-			}
-		} else if (itemMap.get(item) != null) {
+		if (itemMap.get(item) != null) {
 			setPageInput(itemMap.get(item));
 			refresh(tabFolder, itemMap.get(item), false);
 		}
@@ -85,8 +70,6 @@ public class QRCodePageGenerator extends AbstractPageGenerator {
 		generalPage.setInput(input);
 		addSelectionListener(this);
 		((TabPage) generalPage).refresh();
-
-		createTabItem(CUSTOM_PAGE_TITLE, ATTRIBUTESTITLE);
 
 		if (tabFolder.getSelection() != null) {
 			buildItemContent(tabFolder.getSelection());

@@ -48,7 +48,7 @@ public class QRCodeBuilder extends ReportItemBuilderUI {
 
 			if (item instanceof QRCodeItem) {
 				// XXX change to QRCodeEditor2 for expression support
-				QRCodeEditor editor = new QRCodeEditor2(Display.getCurrent().getActiveShell(),
+				QRCodeEditor editor = new QRCodeEditor(Display.getCurrent().getActiveShell(),
 						(QRCodeItem) item);
 
 				return editor.open();
@@ -65,14 +65,14 @@ public class QRCodeBuilder extends ReportItemBuilderUI {
  */
 class QRCodeEditor extends TrayDialog {
 
-	protected QRCodeItem qrItem;
+	private QRCodeItem qrItem;
 
-	protected Text txtText;
-	protected Spinner spDotsWidth;
-	protected Text txtEncoding;
-	protected Label lbText;
-	protected Label lbDotsWidth;
-	protected Label lbEncoding;
+	private Text txtText;
+	private Spinner spDotsWidth;
+	private Text txtEncoding;
+	private Label lbText;
+	private Label lbDotsWidth;
+	private Label lbEncoding;
 
 	protected QRCodeEditor(Shell shell, QRCodeItem qrItem) {
 		super(shell);
@@ -87,14 +87,43 @@ class QRCodeEditor extends TrayDialog {
 		newShell.setText("QRCode Builder"); //$NON-NLS-1$
 	}
 
-	protected void createTextArea(Composite parent) {
+	private void createTextArea(Composite parent) {
 		lbText = new Label(parent, SWT.None);
 		lbText.setText("Text Content:"); //$NON-NLS-1$
 
 		txtText = new Text(parent, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
 		txtText.setLayoutData(gd);
+
+		Button btnExp = new Button(parent, SWT.PUSH);
+		btnExp.setText("..."); //$NON-NLS-1$
+		btnExp.setToolTipText("Invoke Expression Builder"); //$NON-NLS-1$
+
+		btnExp.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				openExpression(txtText);
+			}
+		});
+
+	}
+
+	private void openExpression(Text textControl) {
+		String oldValue = textControl.getText();
+
+		ExpressionBuilder eb = new ExpressionBuilder(textControl.getShell(), oldValue);
+		eb.setExpressionProvider(new ExpressionProvider(qrItem.getModelHandle()));
+
+		String result = oldValue;
+
+		if (eb.open() == Window.OK) {
+			result = eb.getResult();
+		}
+
+		if (!oldValue.equals(result)) {
+			textControl.setText(result);
+		}
 	}
 
 	@Override
@@ -153,55 +182,4 @@ class QRCodeEditor extends TrayDialog {
 
 		super.okPressed();
 	}
-}
-
-/**
- * QRCodeEditor2
- */
-class QRCodeEditor2 extends QRCodeEditor {
-
-	protected QRCodeEditor2(Shell shell, QRCodeItem textItem) {
-		super(shell, textItem);
-	}
-
-	@Override
-	protected void createTextArea(Composite parent) {
-		lbText = new Label(parent, SWT.None);
-		lbText.setText("Text Content:"); //$NON-NLS-1$
-
-		txtText = new Text(parent, SWT.BORDER);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		txtText.setLayoutData(gd);
-
-		Button btnExp = new Button(parent, SWT.PUSH);
-		btnExp.setText("..."); //$NON-NLS-1$
-		btnExp.setToolTipText("Invoke Expression Builder"); //$NON-NLS-1$
-
-		btnExp.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent event) {
-				openExpression(txtText);
-			}
-		});
-
-	}
-
-	private void openExpression(Text textControl) {
-		String oldValue = textControl.getText();
-
-		ExpressionBuilder eb = new ExpressionBuilder(textControl.getShell(), oldValue);
-		eb.setExpressionProvider(new ExpressionProvider(qrItem.getModelHandle()));
-
-		String result = oldValue;
-
-		if (eb.open() == Window.OK) {
-			result = eb.getResult();
-		}
-
-		if (!oldValue.equals(result)) {
-			textControl.setText(result);
-		}
-	}
-
 }

@@ -27,6 +27,8 @@ public class QRCodeItem extends ReportItem {
 	public static final String TEXT_PROP = "text"; //$NON-NLS-1$
 	public static final String DOTS_WIDTH_PROP = "dotsWidth"; //$NON-NLS-1$
 	public static final String ENCODING_PROP = "encoding"; //$NON-NLS-1$
+	public static final String ERROR_CORRECTION_LEVEL_PROP = "errorCorrectionLevel"; //$NON-NLS-1$
+	public static final String QR_VERSION_PROP = "qrVersion"; //$NON-NLS-1$
 
 	private ExtendedItemHandle modelHandle;
 
@@ -50,6 +52,14 @@ public class QRCodeItem extends ReportItem {
 		return modelHandle.getStringProperty(ENCODING_PROP);
 	}
 
+	public String getErrorCorrectionLevel() {
+		return modelHandle.getStringProperty(ERROR_CORRECTION_LEVEL_PROP);
+	}
+
+	public int getQrVersion() {
+		return modelHandle.getIntProperty(QR_VERSION_PROP);
+	}
+
 	public void setText(String value) throws SemanticException {
 		modelHandle.setProperty(TEXT_PROP, value);
 	}
@@ -60,6 +70,14 @@ public class QRCodeItem extends ReportItem {
 
 	public void setEncoding(String value) throws SemanticException {
 		modelHandle.setProperty(ENCODING_PROP, value);
+	}
+
+	public void setErrorLevel(String value) throws SemanticException {
+		modelHandle.setProperty(ERROR_CORRECTION_LEVEL_PROP, value);
+	}
+
+	public void setQrVersion(String value) throws SemanticException {
+		modelHandle.setProperty(QR_VERSION_PROP, value);
 	}
 
 }

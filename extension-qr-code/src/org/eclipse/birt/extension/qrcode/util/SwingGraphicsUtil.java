@@ -30,7 +30,8 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
  */
 public class SwingGraphicsUtil {
 
-	public static BufferedImage createQRCodeImage(String text, int dotsWidth, int dotsHeight, String encoding) {
+	public static BufferedImage createQRCodeImage(String text, int dotsWidth, int dotsHeight, String encoding,
+			String errorCorrectionLevel, int qrVersion) {
 		QRCodeWriter qrw = null;
 		try {
 			if (text == null || text.trim().length() == 0) {
@@ -40,8 +41,18 @@ public class SwingGraphicsUtil {
 			qrw = new QRCodeWriter();
 			HashMap<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
 			hints.put(EncodeHintType.CHARACTER_SET, (encoding != null ? encoding : "utf-8"));
-			hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
-			hints.put(EncodeHintType.QR_VERSION, 2);
+			if ("L".equals(errorCorrectionLevel)) {
+				hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+			} else if ("H".equals(errorCorrectionLevel)) {
+				hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+			} else if ("Q".equals(errorCorrectionLevel)) {
+				hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.Q);
+			} else {
+				hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+			}
+			if (qrVersion > 0) {
+				hints.put(EncodeHintType.QR_VERSION, qrVersion);
+			}
 			BitMatrix bm = qrw.encode(text, BarcodeFormat.QR_CODE, dotsWidth, dotsHeight, hints);
 			MatrixToImageConfig config = new MatrixToImageConfig(0xFF000000, 0x00FFFFFF);
 			// BLACK and transparent instead of white

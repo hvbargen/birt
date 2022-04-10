@@ -32,9 +32,19 @@
                name="text"
                type="expression"/>
          <property
-               defaultDisplayName="encoding"
+               defaultDisplayName="Encoding"
                defaultValue="utf-8"
                name="encoding"
+               type="string"/>
+         <property
+               defaultDisplayName="QR-Version"
+               defaultValue=""
+               name="qrVersion"
+               type="integer"/>
+         <property
+               defaultDisplayName="Error Correction Level"
+               defaultValue="M"
+               name="errorCorrectionLevel"
                type="string"/>
       </reportItem>
    </extension>

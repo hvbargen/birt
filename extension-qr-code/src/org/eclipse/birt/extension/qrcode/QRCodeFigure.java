@@ -30,6 +30,8 @@ public class QRCodeFigure extends Figure {
 	private String lastText;
 	private int lastDotsWidth;
 	private String lastEncoding;
+	private String lastErrorCorrectionLevel;
+	private int lastQrVersion;
 
 	private Image cachedImage;
 
@@ -66,25 +68,34 @@ public class QRCodeFigure extends Figure {
 		String text = qrItem.getText();
 		int dotsWidth = qrItem.getDotsWidth();
 		String encoding = qrItem.getEncoding();
+		String errorCorrectionLevel = qrItem.getErrorCorrectionLevel();
+		int qrVersion = qrItem.getQrVersion();
 
 		if (text == null) {
 			text = ""; //$NON-NLS-1$
 		}
 		if (encoding == null) {
-			encoding = "";
+			encoding = ""; //$NON-NLS-1$
+		}
+		if (errorCorrectionLevel == null) {
+			errorCorrectionLevel = ""; //$NON-NLS-1$
 		}
 
 		if (!text.equals(lastText) || dotsWidth != lastDotsWidth || encoding != lastEncoding || cachedImage == null
+				|| !errorCorrectionLevel.equals(lastErrorCorrectionLevel) || qrVersion != lastQrVersion
 				|| cachedImage.isDisposed()) {
 			lastText = text;
 			lastDotsWidth = dotsWidth;
 			lastEncoding = encoding;
+			lastErrorCorrectionLevel = errorCorrectionLevel;
+			lastQrVersion = qrVersion;
 
 			if (cachedImage != null && !cachedImage.isDisposed()) {
 				cachedImage.dispose();
 			}
 
-			cachedImage = SwtGraphicsUtil.createQRCodeImage(text, dotsWidth, dotsWidth, encoding);
+			cachedImage = SwtGraphicsUtil.createQRCodeImage(text, dotsWidth, dotsWidth, encoding, errorCorrectionLevel,
+					qrVersion);
 		}
 
 		if (cachedImage != null && !cachedImage.isDisposed()) {

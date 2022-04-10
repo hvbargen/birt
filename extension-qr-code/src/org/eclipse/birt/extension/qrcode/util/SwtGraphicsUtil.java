@@ -35,13 +35,14 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
  */
 public class SwtGraphicsUtil {
 
-	public static Image createQRCodeImage(String text, int dotsWidth, int dotsHeight, String encoding) {
+	public static Image createQRCodeImage(String text, int dotsWidth, int dotsHeight, String encoding,
+			String errorCorrectionLevel, int qrVersion) {
 		try {
 			if (text == null || text.trim().length() == 0) {
 				return null;
 			}
 
-			return renderQRObject(text, dotsWidth, dotsHeight, encoding);
+			return renderQRObject(text, dotsWidth, dotsHeight, encoding, errorCorrectionLevel, qrVersion);
 		} catch (Exception e) {
 			e.printStackTrace();
 
@@ -66,7 +67,8 @@ public class SwtGraphicsUtil {
 		return out;
 	}
 
-	private static Image renderQRObject(String text, int width, int height, String encoding) {
+	private static Image renderQRObject(String text, int width, int height, String encoding, String errorCorrectionLevel,
+			int qrVersion) {
 		Display display = Display.getCurrent();
 		QRCodeWriter qrw = null;
 
@@ -83,8 +85,18 @@ public class SwtGraphicsUtil {
 			qrw = new QRCodeWriter();
 			HashMap<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
 			hints.put(EncodeHintType.CHARACTER_SET, encoding != null ? encoding : "utf-8");
-			hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
-			hints.put(EncodeHintType.QR_VERSION, 2);
+			if ("L".equals(errorCorrectionLevel)) {
+				hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+			} else if ("H".equals(errorCorrectionLevel)) {
+				hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+			} else if ("Q".equals(errorCorrectionLevel)) {
+				hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.Q);
+			} else {
+				hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
+			}
+			if (qrVersion > 0) {
+				hints.put(EncodeHintType.QR_VERSION, qrVersion);
+			}
 			BitMatrix bm = qrw.encode(text, BarcodeFormat.QR_CODE, width, height, hints);
 
 			byte[] rawData = toByteArray(bm);
